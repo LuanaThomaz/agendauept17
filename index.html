@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Institucional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #F7F6F3;
+  --surface: #FFFFFF;
+  --surface2: #F0EEE9;
+  --border: rgba(0,0,0,0.10);
+  --border2: rgba(0,0,0,0.18);
+  --text: #1A1917;
+  --text2: #6B6860;
+  --text3: #A09D97;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --blue-bg: #E8F0FB; --blue-text: #1A4A8A; --blue-dot: #2563EB;
+  --green-bg: #E3F5EE; --green-text: #0E5E42; --green-dot: #10916A;
+  --purple-bg: #EFEDFC; --purple-text: #3D2FA0; --purple-dot: #5B4FCF;
+  --amber-bg: #FDF0DC; --amber-text: #7A4D0C; --amber-dot: #D97706;
+  --gray-bg: #EDEDEB; --gray-text: #4A4844; --gray-dot: #7A7772;
+  --weekend-bg: #FAF8F5;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+.page { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 38px; height: 38px; background: var(--text); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; flex-shrink: 0; }
+.logo h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+.logo p { font-size: 12px; color: var(--text2); margin-top: 1px; }
+.nav-week { display: flex; align-items: center; gap: 8px; }
+.nav-week button { background: var(--surface); border: 0.5px solid var(--border2); border-radius: 8px; padding: 6px 11px; cursor: pointer; color: var(--text); font-size: 13px; font-family: inherit; transition: background .15s; }
+.nav-week button:hover { background: var(--surface2); }
+.week-label { font-size: 13px; font-weight: 500; min-width: 155px; text-align: center; color: var(--text2); font-family: 'DM Mono', monospace; }
+.tabs { display: flex; gap: 2px; margin-bottom: 1.25rem; background: var(--surface2); border-radius: var(--radius); padding: 3px; width: fit-content; }
+.tab { padding: 7px 16px; cursor: pointer; font-size: 13px; font-weight: 500; border-radius: 8px; color: var(--text2); background: none; border: none; font-family: inherit; transition: all .15s; }
+.tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.tab:hover:not(.active) { color: var(--text); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem; }
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+.leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.grid-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 0.5px solid var(--border); background: var(--surface); }
+.grid-header { display: grid; grid-template-columns: 72px repeat(7, 1fr); gap: 0; border-bottom: 0.5px solid var(--border); }
+.grid-header > div:first-child { border-right: 0.5px solid var(--border); }
+.dh { text-align: center; font-size: 11px; font-weight: 600; color: var(--text2); padding: 10px 4px 8px; letter-spacing: .3px; text-transform: uppercase; border-right: 0.5px solid var(--border); }
+.dh:last-child { border-right: none; }
+.dh .dh-date { font-size: 18px; font-weight: 600; color: var(--text); display: block; margin-top: 2px; font-family: 'DM Mono', monospace; letter-spacing: -1px; }
+.dh.today { color: var(--blue-dot); }
+.dh.today .dh-date { color: var(--blue-dot); }
+.dh.weekend { color: var(--text3); }
+.dh.weekend .dh-date { color: var(--text3); }
+.time-grid { display: grid; grid-template-columns: 72px repeat(7, 1fr); }
+.time-label { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--text3); text-align: right; padding: 0 10px 0 0; height: 64px; display: flex; align-items: center; justify-content: flex-end; border-right: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); }
+.time-label:last-of-type { border-bottom: none; }
+.slot { height: 64px; border-right: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); display: flex; flex-direction: column; overflow: hidden; cursor: pointer; position: relative; background: var(--surface); transition: background .12s; }
+.slot:last-child { border-right: none; }
+.slot.weekend-col { background: var(--weekend-bg); }
+.slot.empty:hover { background: var(--surface2); }
+.slot.empty:hover::after { content: '+'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 18px; color: var(--text3); font-weight: 300; }
+.event-block { width: 100%; padding: 5px 7px; display: flex; flex-direction: column; justify-content: center; flex: 1; border-left: 3px solid transparent; }
+.ev-title { font-size: 11px; font-weight: 600; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ev-sub { font-size: 10px; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.add-btn { display: flex; align-items: center; gap: 7px; padding: 10px 14px; border: 1.5px dashed var(--border2); border-radius: var(--radius); background: none; color: var(--text2); cursor: pointer; font-size: 13px; font-family: inherit; width: 100%; justify-content: center; margin-top: 12px; transition: all .15s; }
+.add-btn:hover { background: var(--surface); color: var(--text); border-color: var(--text3); }
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; z-index: 200; backdrop-filter: blur(2px); }
+.modal { background: var(--surface); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 1.5rem; width: 380px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,.14); }
+.modal h2 { font-size: 16px; font-weight: 600; }
+.field { margin-bottom: 13px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--text2); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .4px; }
+.field input, .field select, .field textarea { width: 100%; padding: 8px 11px; border: 0.5px solid var(--border2); border-radius: 8px; font-size: 13px; background: var(--surface); color: var(--text); font-family: inherit; transition: border-color .15s; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--blue-dot); }
+.field textarea { resize: vertical; min-height: 64px; }
+.modal-actions { display: flex; gap: 8px; margin-top: 1.25rem; justify-content: flex-end; }
+.btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 0.5px solid var(--border2); background: none; color: var(--text); font-family: inherit; font-weight: 500; transition: all .15s; }
+.btn:hover { background: var(--surface2); }
+.btn.primary { background: var(--text); color: #fff; border-color: var(--text); }
+.btn.primary:hover { background: #333; }
+.btn.danger { color: #A32D2D; border-color: #E8C4C4; }
+.btn.danger:hover { background: #FEF2F2; }
+.list-card { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 11px 13px; margin-bottom: 7px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); transition: border-color .15s; }
+.list-card:hover { border-color: var(--border2); }
+.lc-name { font-size: 13px; font-weight: 600; }
+.lc-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.lc-actions { display: flex; gap: 4px; }
+.icon-btn { background: none; border: none; cursor: pointer; color: var(--text2); padding: 5px; border-radius: 7px; font-size: 16px; transition: all .15s; }
+.icon-btn:hover { color: var(--text); background: var(--surface2); }
+.color-picker { display: flex; gap: 7px; flex-wrap: wrap; }
+.color-opt { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2.5px solid transparent; transition: transform .12s; }
+.color-opt:hover { transform: scale(1.15); }
+.color-opt.selected { border-color: var(--text); }
+.badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; letter-spacing: .2px; }
+.ed-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 9px; font-size: 13px; }
+.ed-label { color: var(--text2); min-width: 82px; flex-shrink: 0; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .3px; padding-top: 1px; }
+.section-empty { color: var(--text2); font-size: 13px; padding: 12px 0; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-calendar-event"></i></div>
+      <div>
+        <h1>Agenda Institucional</h1>
+        <p>Professores · Cursos · Reuniões · Ações</p>
+      </div>
+    </div>
+    <div class="nav-week">
+      <button onclick="moveWeek(-1)"><i class="ti ti-chevron-left"></i></button>
+      <span class="week-label" id="week-label"></span>
+      <button onclick="moveWeek(1)"><i class="ti ti-chevron-right"></i></button>
+      <button onclick="goToday()">Hoje</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('agenda',this)"><i class="ti ti-layout-grid" style="font-size:13px;vertical-align:-1px;margin-right:5px"></i>Agenda</button>
+    <button class="tab" onclick="switchTab('professores',this)"><i class="ti ti-users" style="font-size:13px;vertical-align:-1px;margin-right:5px"></i>Professores</button>
+    <button class="tab" onclick="switchTab('cursos',this)"><i class="ti ti-book" style="font-size:13px;vertical-align:-1px;margin-right:5px"></i>Cursos</button>
+  </div>
+
+  <div id="tab-agenda">
+    <div class="legend" id="legend"></div>
+    <div class="grid-wrap">
+      <div class="grid-header" id="grid-header"></div>
+      <div class="time-grid" id="time-grid"></div>
+    </div>
+    <button class="add-btn" onclick="openNewEvent()"><i class="ti ti-plus"></i> Novo evento / aula</button>
+  </div>
+
+  <div id="tab-professores" style="display:none">
+    <div id="prof-list"></div>
+    <button class="add-btn" onclick="openAddProf()"><i class="ti ti-plus"></i> Adicionar professor</button>
+  </div>
+
+  <div id="tab-cursos" style="display:none">
+    <div id="curso-list"></div>
+    <button class="add-btn" onclick="openAddCurso()"><i class="ti ti-plus"></i> Adicionar curso</button>
+  </div>
+</div>
+
+<div id="modal-root"></div>
+
+<script>
+const PERIODS=[
+  {label:'Manhã 1',start:'07:30',end:'09:30'},
+  {label:'Manhã 2',start:'09:30',end:'11:30'},
+  {label:'Tarde 1',start:'13:00',end:'15:00'},
+  {label:'Tarde 2',start:'15:00',end:'17:00'},
+  {label:'Noite 1',start:'18:30',end:'20:30'},
+  {label:'Noite 2',start:'20:30',end:'22:30'},
+];
+const DAYS=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+const WEEKEND=[5,6];
+const TYPES=[
+  {key:'aula',label:'Aula',dot:'var(--blue-dot)',bg:'var(--blue-bg)',text:'var(--blue-text)',border:'#2563EB'},
+  {key:'reuniao',label:'Reunião',dot:'var(--green-dot)',bg:'var(--green-bg)',text:'var(--green-text)',border:'#10916A'},
+  {key:'conselho',label:'Conselho de Classe',dot:'var(--purple-dot)',bg:'var(--purple-bg)',text:'var(--purple-text)',border:'#5B4FCF'},
+  {key:'acao',label:'Ação Externa',dot:'var(--amber-dot)',bg:'var(--amber-bg)',text:'var(--amber-text)',border:'#D97706'},
+  {key:'outro',label:'Outro',dot:'var(--gray-dot)',bg:'var(--gray-bg)',text:'var(--gray-text)',border:'#7A7772'},
+];
+const PROF_COLORS=['#2563EB','#10916A','#9333EA','#D97706','#DC2626','#0891B2','#059669','#7C3AED'];
+
+let professores=[
+  {id:1,nome:'Prof. Ana',cor:'#2563EB'},
+  {id:2,nome:'Prof. Bruno',cor:'#10916A'},
+  {id:3,nome:'Prof. Carla',cor:'#9333EA'},
+  {id:4,nome:'Prof. Diego',cor:'#D97706'},
+];
+let cursos=[
+  {id:1,nome:'Informática Básica',turno:'Manhã'},
+  {id:2,nome:'Inglês Intermediário',turno:'Tarde'},
+  {id:3,nome:'Administração',turno:'Noite'},
+];
+let events=[
+  {id:1,tipo:'aula',titulo:'Informática Básica',professorId:1,cursoId:1,dia:0,periodo:0,obs:''},
+  {id:2,tipo:'aula',titulo:'Inglês Intermediário',professorId:2,cursoId:2,dia:1,periodo:2,obs:''},
+  {id:3,tipo:'reuniao',titulo:'Reunião pedagógica',professorId:null,cursoId:null,dia:2,periodo:2,obs:'Sala da coordenação'},
+  {id:4,tipo:'conselho',titulo:'Conselho de Classe',professorId:null,cursoId:null,dia:3,periodo:1,obs:''},
+  {id:5,tipo:'aula',titulo:'Administração',professorId:3,cursoId:3,dia:4,periodo:4,obs:''},
+  {id:6,tipo:'acao',titulo:'Visita técnica',professorId:1,cursoId:1,dia:5,periodo:1,obs:'Saída às 09h30'},
+];
+let nextId=20;
+let baseMonday=getMonday(new Date());
+
+function getMonday(d){const c=new Date(d);const day=c.getDay();const diff=c.getDate()-day+(day===0?-6:1);c.setDate(diff);c.setHours(0,0,0,0);return c;}
+function addDays(d,n){const c=new Date(d);c.setDate(c.getDate()+n);return c;}
+function fmtDate(d){return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});}
+function isToday(d){const t=new Date();return d.toDateString()===t.toDateString();}
+function moveWeek(n){baseMonday=addDays(baseMonday,n*7);renderCalendar();}
+function goToday(){baseMonday=getMonday(new Date());renderCalendar();}
+function getTypeInfo(k){return TYPES.find(t=>t.key===k)||TYPES[4];}
+function getProf(id){return professores.find(p=>p.id===id);}
+function getCurso(id){return cursos.find(c=>c.id===id);}
+
+function renderCalendar(){
+  const days=Array.from({length:7},(_,i)=>addDays(baseMonday,i));
+  document.getElementById('week-label').textContent=fmtDate(days[0])+' – '+fmtDate(days[6]);
+  const gh=document.getElementById('grid-header');
+  gh.innerHTML='<div style="border-right:0.5px solid var(--border)"></div>'+days.map((d,i)=>`
+    <div class="dh${isToday(d)?' today':''}${WEEKEND.includes(i)?' weekend':''}">
+      ${DAYS[i]}<span class="dh-date">${d.getDate()}</span>
+    </div>`).join('');
+  const tg=document.getElementById('time-grid');
+  tg.innerHTML='';
+  PERIODS.forEach((p,pi)=>{
+    const tl=document.createElement('div');
+    tl.className='time-label';
+    tl.textContent=p.start;
+    tg.appendChild(tl);
+    days.forEach((_,di)=>{
+      const col=document.createElement('div');
+      const isWk=WEEKEND.includes(di);
+      col.className='slot'+(isWk?' weekend-col':'')+' empty';
+      if(di===6) col.style.borderRight='none';
+      const evs=events.filter(e=>e.dia===di&&e.periodo===pi);
+      if(evs.length){
+        col.classList.remove('empty');
+        evs.forEach(ev=>{
+          const ti=getTypeInfo(ev.tipo);
+          const block=document.createElement('div');
+          block.className='event-block';
+          block.style.background=ti.bg;
+          block.style.borderLeftColor=ti.border;
+          block.innerHTML=`<div class="ev-title" style="color:${ti.text}">${ev.titulo}</div>`+
+            (ev.professorId?`<div class="ev-sub" style="color:${ti.text}">${getProf(ev.professorId)?.nome||''}</div>`:'');
+          block.onclick=e=>{e.stopPropagation();openEventDetail(ev.id);};
+          col.appendChild(block);
+        });
+      } else {
+        col.onclick=()=>openNewEvent(di,pi);
+      }
+      tg.appendChild(col);
+    });
+  });
+  renderLegend();
+}
+
+function renderLegend(){
+  document.getElementById('legend').innerHTML=TYPES.map(t=>
+    `<div class="leg-item"><div class="leg-dot" style="background:${t.dot}"></div>${t.label}</div>`).join('');
+}
+
+function switchTab(name,btn){
+  ['agenda','professores','cursos'].forEach(t=>{document.getElementById('tab-'+t).style.display=t===name?'':'none';});
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(name==='professores')renderProfList();
+  if(name==='cursos')renderCursoList();
+}
+
+function renderProfList(){
+  document.getElementById('prof-list').innerHTML=professores.length
+    ?professores.map(p=>`<div class="list-card">
+      <div><div class="lc-name"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.cor};margin-right:7px"></span>${p.nome}</div></div>
+      <div class="lc-actions">
+        <button class="icon-btn" onclick="editProf(${p.id})" title="Editar"><i class="ti ti-edit"></i></button>
+        <button class="icon-btn" onclick="deleteProf(${p.id})" title="Remover"><i class="ti ti-trash"></i></button>
+      </div></div>`).join('')
+    :'<p class="section-empty">Nenhum professor cadastrado.</p>';
+}
+
+function renderCursoList(){
+  document.getElementById('curso-list').innerHTML=cursos.length
+    ?cursos.map(c=>`<div class="list-card">
+      <div><div class="lc-name">${c.nome}</div><div class="lc-sub"><i class="ti ti-clock" style="font-size:12px;vertical-align:-1px;margin-right:4px"></i>${c.turno}</div></div>
+      <div class="lc-actions">
+        <button class="icon-btn" onclick="editCurso(${c.id})" title="Editar"><i class="ti ti-edit"></i></button>
+        <button class="icon-btn" onclick="deleteCurso(${c.id})" title="Remover"><i class="ti ti-trash"></i></button>
+      </div></div>`).join('')
+    :'<p class="section-empty">Nenhum curso cadastrado.</p>';
+}
+
+function showModal(html){document.getElementById('modal-root').innerHTML=`<div class="modal-bg" onclick="closeModal(event)">${html}</div>`;}
+function closeModal(e){if(!e||e.target.classList.contains('modal-bg'))closeModalForce();}
+function closeModalForce(){document.getElementById('modal-root').innerHTML='';}
+
+function openEventDetail(id){
+  const ev=events.find(e=>e.id===id);if(!ev)return;
+  const ti=getTypeInfo(ev.tipo);
+  const prof=ev.professorId?getProf(ev.professorId):null;
+  const curso=ev.cursoId?getCurso(ev.cursoId):null;
+  showModal(`<div class="modal" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem">
+      <span class="badge" style="background:${ti.bg};color:${ti.text}">${ti.label}</span>
+      <button class="icon-btn" onclick="closeModalForce()"><i class="ti ti-x"></i></button>
+    </div>
+    <h2 style="margin-bottom:1.1rem">${ev.titulo}</h2>
+    <div>
+      <div class="ed-row"><span class="ed-label">Dia</span><span>${DAYS[ev.dia]}</span></div>
+      <div class="ed-row"><span class="ed-label">Período</span><span>${PERIODS[ev.periodo].label} (${PERIODS[ev.periodo].start}–${PERIODS[ev.periodo].end})</span></div>
+      ${prof?`<div class="ed-row"><span class="ed-label">Professor</span><span>${prof.nome}</span></div>`:''}
+      ${curso?`<div class="ed-row"><span class="ed-label">Curso</span><span>${curso.nome}</span></div>`:''}
+      ${ev.obs?`<div class="ed-row"><span class="ed-label">Obs.</span><span>${ev.obs}</span></div>`:''}
+    </div>
+    <div class="modal-actions">
+      <button class="btn danger" onclick="deleteEvent(${id})"><i class="ti ti-trash"></i> Excluir</button>
+      <button class="btn" onclick="openEditEvent(${id})"><i class="ti ti-edit"></i> Editar</button>
+      <button class="btn primary" onclick="closeModalForce()">Fechar</button>
+    </div>
+  </div>`);
+}
+
+function buildEventForm(ev){
+  const profOpts=professores.map(p=>`<option value="${p.id}" ${ev.professorId==p.id?'selected':''}>${p.nome}</option>`).join('');
+  const cursoOpts=cursos.map(c=>`<option value="${c.id}" ${ev.cursoId==c.id?'selected':''}>${c.nome}</option>`).join('');
+  const diaOpts=DAYS.map((d,i)=>`<option value="${i}" ${ev.dia==i?'selected':''}>${d}</option>`).join('');
+  const perOpts=PERIODS.map((p,i)=>`<option value="${i}" ${ev.periodo==i?'selected':''}>${p.label} (${p.start})</option>`).join('');
+  const typeOpts=TYPES.map(t=>`<option value="${t.key}" ${ev.tipo===t.key?'selected':''}>${t.label}</option>`).join('');
+  return `
+    <div class="field"><label>Tipo</label><select id="f-tipo">${typeOpts}</select></div>
+    <div class="field"><label>Título</label><input id="f-titulo" value="${ev.titulo||''}" placeholder="Nome do evento ou disciplina"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="field"><label>Dia</label><select id="f-dia">${diaOpts}</select></div>
+      <div class="field"><label>Período</label><select id="f-periodo">${perOpts}</select></div>
+    </div>
+    <div class="field"><label>Professor (opcional)</label><select id="f-prof"><option value="">—</option>${profOpts}</select></div>
+    <div class="field"><label>Curso (opcional)</label><select id="f-curso"><option value="">—</option>${cursoOpts}</select></div>
+    <div class="field"><label>Observações</label><textarea id="f-obs">${ev.obs||''}</textarea></div>`;
+}
+
+function openNewEvent(di,pi){
+  showModal(`<div class="modal" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <h2>Novo evento</h2>
+      <button class="icon-btn" onclick="closeModalForce()"><i class="ti ti-x"></i></button>
+    </div>
+    ${buildEventForm({tipo:'aula',titulo:'',professorId:'',cursoId:'',dia:di??0,periodo:pi??0,obs:''})}
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModalForce()">Cancelar</button>
+      <button class="btn primary" onclick="saveNewEvent()">Salvar</button>
+    </div>
+  </div>`);
+}
+
+function openEditEvent(id){
+  const ev=events.find(e=>e.id===id);if(!ev)return;
+  showModal(`<div class="modal" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <h2>Editar evento</h2>
+      <button class="icon-btn" onclick="closeModalForce()"><i class="ti ti-x"></i></button>
+    </div>
+    ${buildEventForm(ev)}
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModalForce()">Cancelar</button>
+      <button class="btn primary" onclick="saveEditEvent(${id})">Salvar</button>
+    </div>
+  </div>`);
+}
+
+function readForm(){
+  return{
+    tipo:document.getElementById('f-tipo').value,
+    titulo:document.getElementById('f-titulo').value.trim(),
+    dia:parseInt(document.getElementById('f-dia').value),
+    periodo:parseInt(document.getElementById('f-periodo').value),
+    professorId:document.getElementById('f-prof').value?parseInt(document.getElementById('f-prof').value):null,
+    cursoId:document.getElementById('f-curso').value?parseInt(document.getElementById('f-curso').value):null,
+    obs:document.getElementById('f-obs').value.trim(),
+  };
+}
+
+function saveNewEvent(){const f=readForm();if(!f.titulo)return alert('Informe o título.');events.push({id:nextId++,...f});closeModalForce();renderCalendar();}
+function saveEditEvent(id){const f=readForm();if(!f.titulo)return alert('Informe o título.');const idx=events.findIndex(e=>e.id===id);if(idx>=0)events[idx]={...events[idx],...f};closeModalForce();renderCalendar();}
+function deleteEvent(id){if(!confirm('Excluir este evento?'))return;events=events.filter(e=>e.id!==id);closeModalForce();renderCalendar();}
+
+function colorPicker(selected){
+  return `<div class="color-picker">${PROF_COLORS.map(c=>`<div class="color-opt${c===selected?' selected':''}" style="background:${c}" data-c="${c}" onclick="selectColor(this)"></div>`).join('')}</div>`;
+}
+function selectColor(el){el.closest('.color-picker').querySelectorAll('.color-opt').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');}
+function getSelectedColor(){const s=document.querySelector('.color-opt.selected');return s?s.dataset.c:PROF_COLORS[0];}
+
+function openAddProf(){
+  showModal(`<div class="modal" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <h2>Novo professor</h2><button class="icon-btn" onclick="closeModalForce()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="field"><label>Nome</label><input id="p-nome" placeholder="Ex: Prof. Maria"></div>
+    <div class="field"><label>Cor</label>${colorPicker(PROF_COLORS[0])}</div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModalForce()">Cancelar</button>
+      <button class="btn primary" onclick="saveProf()">Salvar</button>
+    </div>
+  </div>`);
+}
+
+function editProf(id){
+  const p=getProf(id);if(!p)return;
+  showModal(`<div class="modal" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <h2>Editar professor</h2><button class="icon-btn" onclick="closeModalForce()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="field"><label>Nome</label><input id="p-nome" value="${p.nome}"></div>
+    <div class="field"><label>Cor</label>${colorPicker(p.cor)}</div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModalForce()">Cancelar</button>
+      <button class="btn primary" onclick="saveEditProf(${id})">Salvar</button>
+    </div>
+  </div>`);
+}
+
+function saveProf(){const nome=document.getElementById('p-nome').value.trim();if(!nome)return alert('Informe o nome.');professores.push({id:nextId++,nome,cor:getSelectedColor()});closeModalForce();renderProfList();}
+function saveEditProf(id){const nome=document.getElementById('p-nome').value.trim();if(!nome)return alert('Informe o nome.');const p=professores.find(p=>p.id===id);if(p){p.nome=nome;p.cor=getSelectedColor();}closeModalForce();renderProfList();}
+function deleteProf(id){if(!confirm('Remover este professor?'))return;professores=professores.filter(p=>p.id!==id);renderProfList();}
+
+function openAddCurso(){
+  showModal(`<div class="modal" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <h2>Novo curso</h2><button class="icon-btn" onclick="closeModalForce()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="field"><label>Nome do curso</label><input id="c-nome" placeholder="Ex: Excel Avançado"></div>
+    <div class="field"><label>Turno</label><select id="c-turno"><option>Manhã</option><option>Tarde</option><option>Noite</option><option>Integral</option></select></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModalForce()">Cancelar</button>
+      <button class="btn primary" onclick="saveCurso()">Salvar</button>
+    </div>
+  </div>`);
+}
+
+function editCurso(id){
+  const c=getCurso(id);if(!c)return;
+  showModal(`<div class="modal" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <h2>Editar curso</h2><button class="icon-btn" onclick="closeModalForce()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="field"><label>Nome do curso</label><input id="c-nome" value="${c.nome}"></div>
+    <div class="field"><label>Turno</label><select id="c-turno">${['Manhã','Tarde','Noite','Integral'].map(t=>`<option ${t===c.turno?'selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModalForce()">Cancelar</button>
+      <button class="btn primary" onclick="saveEditCurso(${id})">Salvar</button>
+    </div>
+  </div>`);
+}
+
+function saveCurso(){const nome=document.getElementById('c-nome').value.trim();if(!nome)return alert('Informe o nome.');cursos.push({id:nextId++,nome,turno:document.getElementById('c-turno').value});closeModalForce();renderCursoList();}
+function saveEditCurso(id){const nome=document.getElementById('c-nome').value.trim();if(!nome)return alert('Informe o nome.');const c=cursos.find(c=>c.id===id);if(c){c.nome=nome;c.turno=document.getElementById('c-turno').value;}closeModalForce();renderCursoList();}
+function deleteCurso(id){if(!confirm('Remover?'))return;cursos=cursos.filter(c=>c.id!==id);renderCursoList();}
+
+renderCalendar();
+</script>
+</body>
+</html>
